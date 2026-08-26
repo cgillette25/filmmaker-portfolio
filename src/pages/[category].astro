@@ -1,0 +1,32 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import VideoCard from '../components/VideoCard.astro';
+
+export async function getStaticPaths() {
+  const allVideos = await getCollection('videos');
+  const categories = [...new Set(allVideos.map((v) => v.data.category))];
+
+  return categories.map((category) => {
+    const videos = allVideos.filter((v) => v.data.category === category);
+    return {
+      params: { category },
+      props: { videos },
+    };
+  });
+}
+
+interface Props {
+  videos: CollectionEntry<'videos'>[];
+}
+
+const { category } = Astro.params;
+const { videos } = Astro.props as Props;
+---
+<Base title={category}>
+  <h1>{category}</h1>
+  <div>
+    {videos.map((video) => <VideoCard video={video} />)}
+  </div>
+</Base>

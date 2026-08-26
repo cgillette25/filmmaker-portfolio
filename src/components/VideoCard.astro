@@ -1,0 +1,15 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import YouTubeEmbed from './YouTubeEmbed.astro';
+
+interface Props {
+  video: CollectionEntry<'videos'>;
+}
+const { video } = Astro.props;
+const { title, youtubeId, description } = video.data;
+---
+<article class="video-card">
+  <h3>{title}</h3>
+  <YouTubeEmbed youtubeId={youtubeId} title={title} />
+  {description && <p>{description}</p>}
+</article>

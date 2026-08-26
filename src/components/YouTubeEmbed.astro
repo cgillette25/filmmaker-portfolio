@@ -1,0 +1,16 @@
+---
+interface Props {
+  youtubeId: string;
+  title: string;
+}
+const { youtubeId, title } = Astro.props;
+---
+<div class="youtube-embed">
+  <iframe
+    src={`https://www.youtube.com/embed/${youtubeId}`}
+    title={title}
+    frameborder="0"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+    allowfullscreen
+  ></iframe>
+</div>
