@@ -1,0 +1,20 @@
+backend:
+  name: github
+  repo: cgillette25/filmmaker-portfolio
+  branch: main
+
+media_folder: "public/images/uploads"
+public_folder: "/images/uploads"
+
+collections:
+  - name: "videos"
+    label: "Videos"
+    folder: "src/content/videos"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "YouTube Video ID", name: "youtubeId", widget: "string", hint: "The part after v= in the YouTube URL, e.g. dQw4w9WgXcQ" }
+      - { label: "Category", name: "category", widget: "select", options: ["verticals", "shorts", "dance"] }
+      - { label: "Date", name: "date", widget: "datetime" }
+      - { label: "Description", name: "description", widget: "text", required: false }
