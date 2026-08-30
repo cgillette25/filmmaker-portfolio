@@ -1,0 +1,75 @@
+---
+import { TEAM } from '../lib/site';
+---
+
+<section class="wrap about" id="about">
+  <div class="eyebrow">WHO WE ARE</div>
+  <h2 class="about__h">A small team that makes things quickly.</h2>
+
+  <div class="about__grid">
+    {TEAM.map((p) => (
+      <div class="about__person">
+        <div class="frame about__frame" style={`transform:rotate(${p.rotate}deg);`}>
+          <span class="tape" style={`transform:rotate(${p.rotate}deg);`}></span>
+          <span class={`about__tile about__tile--${p.tone}`}>
+            <!-- placeholder until real headshots go in -->
+            <svg viewBox="0 0 64 64" width="52" height="52" aria-hidden="true">
+              <rect x="8" y="14" width="48" height="36" rx="3" fill="none" stroke="currentColor" stroke-width="3"></rect>
+              <g fill="currentColor">
+                <rect x="12" y="18" width="6" height="5" rx="1"></rect>
+                <rect x="12" y="27" width="6" height="5" rx="1"></rect>
+                <rect x="12" y="36" width="6" height="5" rx="1"></rect>
+                <rect x="46" y="18" width="6" height="5" rx="1"></rect>
+                <rect x="46" y="27" width="6" height="5" rx="1"></rect>
+                <rect x="46" y="36" width="6" height="5" rx="1"></rect>
+              </g>
+              <path d="M28 24L40 32L28 40V24Z" fill="currentColor"></path>
+            </svg>
+          </span>
+        </div>
+
+        <div class="about__copy">
+          <h3 class="about__name">{p.name}</h3>
+          <div class="about__role">{p.role}</div>
+          <p class="about__bio">{p.bio}</p>
+        </div>
+      </div>
+    ))}
+  </div>
+</section>
+
+<style>
+  .about { padding-bottom: 96px; }
+  .about__h { font-size: 40px; margin-top: 12px; margin-bottom: 44px; max-width: 640px; }
+
+  .about__grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 64px; }
+  .about__person { display: flex; gap: 30px; align-items: flex-start; }
+
+  .about__frame { width: 132px; flex-shrink: 0; margin-top: 6px; }
+  .about__tile {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    aspect-ratio: 4 / 5;
+  }
+  .about__tile--indigo { background: var(--indigo); color: var(--cream); }
+  .about__tile--orange { background: var(--orange); color: var(--ink); }
+
+  .about__copy { padding-top: 6px; }
+  .about__name { font-size: 26px; margin-bottom: 6px; }
+  .about__role { font-family: var(--dsp); font-weight: 600; font-size: 13px; letter-spacing: 0.06em; color: var(--orange); margin-bottom: 14px; }
+  .about__bio { font-size: 16px; line-height: 1.66; color: var(--muted); margin: 0; }
+
+  @media (max-width: 1100px) {
+    .about__grid { grid-template-columns: 1fr; gap: 40px; }
+  }
+  @media (max-width: 720px) {
+    .about { padding-bottom: 56px; }
+    .about__h { font-size: 30px; margin-bottom: 30px; }
+    .about__person { gap: 20px; }
+    .about__frame { width: 96px; }
+    .about__name { font-size: 22px; }
+    .about__bio { font-size: 15px; }
+  }
+</style>

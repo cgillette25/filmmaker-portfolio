@@ -1,15 +1,60 @@
 ---
 import type { CollectionEntry } from 'astro:content';
-import YouTubeEmbed from './YouTubeEmbed.astro';
+import { categoryLabel } from '../lib/categories';
 
 interface Props {
   video: CollectionEntry<'videos'>;
+  /** alternate the duotone across a grid so the set reads as one system */
+  tone?: 'indigo' | 'orange';
 }
-const { video } = Astro.props;
-const { title, youtubeId, description } = video.data;
+
+const { video, tone = 'indigo' } = Astro.props;
+const { title, category, youtubeId, date } = video.data;
+
+// YouTube always serves these two. maxres is sharp but not every video has it,
+// so we fall back to hq (which always exists) if it 404s.
+const maxres = `https://i.ytimg.com/vi/${youtubeId}/maxresdefault.jpg`;
+const hq = `https://i.ytimg.com/vi/${youtubeId}/hqdefault.jpg`;
+const year = date.getFullYear();
 ---
-<article class="video-card">
-  <h3>{title}</h3>
-  <YouTubeEmbed youtubeId={youtubeId} title={title} />
-  {description && <p>{description}</p>}
-</article>
+
+<button
+  class="card frame frame--caption"
+  type="button"
+  data-video={youtubeId}
+  data-title={title}
+  aria-label={`Play ${title}`}
+>
+  <span class="card__thumb">
+    <span class={`duo duo--${tone}`} style="width:100%; aspect-ratio:16/9;">
+      <img
+        src={maxres}
+        data-fallback={hq}
+        alt=""
+        loading="lazy"
+        onerror="if(this.dataset.fallback){this.src=this.dataset.fallback;this.removeAttribute('data-fallback');}"
+      />
+    </span>
+    <span class="card__play">
+      <svg width="16" height="16" viewBox="0 0 64 64" aria-hidden="true">
+        <path d="M24 18L48 32L24 46V18Z" fill="oklch(0.14 0.012 40)"></path>
+      </svg>
+    </span>
+  </span>
+  <span class="card__meta">
+    <span class="card__title">{title}</span>
+    <span class="card__sub">{categoryLabel(category)} &middot; {year}</span>
+  </span>
+</button>
+
+<style>
+  /* it's a <button> so it's keyboard-operable, but it should look like a card */
+  .card {
+    border: 0;
+    text-align: left;
+    cursor: pointer;
+    font: inherit;
+    width: 100%;
+    padding: 3.5% 3.5% 3.5% 3.5%;
+  }
+</style>

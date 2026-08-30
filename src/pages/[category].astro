@@ -1,32 +1,118 @@
 ---
-import type { CollectionEntry } from 'astro:content';
 import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import VideoCard from '../components/VideoCard.astro';
+import { CATEGORIES } from '../lib/categories';
+import { SITE } from '../lib/site';
 
 export async function getStaticPaths() {
-  const allVideos = await getCollection('videos');
-  const categories = [...new Set(allVideos.map((v) => v.data.category))];
+  const all = await getCollection('videos');
 
-  return categories.map((category) => {
-    const videos = allVideos.filter((v) => v.data.category === category);
-    return {
-      params: { category },
-      props: { videos },
-    };
-  });
+  return CATEGORIES.map((category) => ({
+    params: { category: category.id },
+    props: {
+      category,
+      videos: all
+        .filter((v) => v.data.category === category.id)
+        .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf()),
+    },
+  }));
 }
 
-interface Props {
-  videos: CollectionEntry<'videos'>[];
-}
-
-const { category } = Astro.params;
-const { videos } = Astro.props as Props;
+const { category, videos } = Astro.props;
+const count = videos.length;
 ---
-<Base title={category}>
-  <h1>{category}</h1>
-  <div>
-    {videos.map((video) => <VideoCard video={video} />)}
-  </div>
+
+<Base title={`${category.label} | Cohan Co. Productions`} description={category.blurb} active={category.id}>
+  <!-- ================= PAGE HEADER ================= -->
+  <section class="head">
+    <div class="head__blob"></div>
+    <div class="halftone head__dots"></div>
+    <svg class="head__star" width="34" height="34" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0L9.5 6.5L16 8L9.5 9.5L8 16L6.5 9.5L0 8L6.5 6.5L8 0Z" fill="var(--orange)"></path></svg>
+
+    <div class="wrap head__inner">
+      <div class="head__crumb"><a href="/">Home</a> <span>/</span> {category.label}</div>
+      <h1 class="head__h">{category.label}</h1>
+      <p class="head__p">{category.blurb}{count > 0 ? ` ${count} ${count === 1 ? 'film' : 'films'}.` : ''}</p>
+    </div>
+  </section>
+
+  <!-- ================= GRID ================= -->
+  <section class="wrap grid-section">
+    {count === 0 ? (
+      <div class="empty-state">
+        <p class="empty">Nothing in {category.label} yet. New work goes up on the YouTube channel first.</p>
+        <a href={SITE.youtube} target="_blank" rel="noopener" class="btn btn-orange">Watch on YouTube</a>
+      </div>
+    ) : (
+      <div class="grid-3">
+        {videos.map((video, i) => (
+          <VideoCard video={video} tone={i % 2 === 0 ? 'indigo' : 'orange'} />
+        ))}
+      </div>
+    )}
+
+    {count > 0 && (
+      <div class="watch-more">
+        <span>More from Cohan Co. on YouTube.</span>
+        <a href={SITE.youtube} target="_blank" rel="noopener" class="btn btn-ghost">Watch on YouTube</a>
+      </div>
+    )}
+  </section>
+
+  <!-- ================= CONTACT ================= -->
+  <section class="cta" id="contact">
+    <div class="wrap">
+      <div class="eyebrow">SAY HELLO</div>
+      <h2 class="cta__h">Got something you want made?</h2>
+      <a href={`mailto:${SITE.email}`} class="btn btn-orange">Start a Project</a>
+    </div>
+  </section>
 </Base>
+
+<style>
+  .head { position: relative; overflow: hidden; padding: 56px 0 44px 0; }
+  .head__inner { position: relative; z-index: 2; }
+  .head__blob {
+    position: absolute; top: -90px; right: -40px; width: 330px; height: 330px;
+    background: var(--indigo); opacity: 0.55;
+    border-radius: 48% 52% 44% 56% / 52% 44% 56% 48%;
+  }
+  .head__dots { position: absolute; top: 64px; right: 250px; width: 110px; height: 110px; opacity: 0.35; }
+  .head__star { position: absolute; top: 44px; right: 120px; }
+  .head__crumb { font-size: 14px; color: var(--muted); margin-bottom: 18px; }
+  .head__crumb span { color: var(--ink3); }
+  .head__crumb a:hover { color: var(--cream); }
+  .head__h { font-size: 56px; line-height: 1.04; margin-bottom: 18px; }
+  .head__p { font-size: 18px; line-height: 1.62; color: var(--muted); margin: 0; max-width: 560px; }
+
+  .grid-section { padding-bottom: 90px; }
+  .empty { color: var(--muted); font-size: 17px; margin: 0; }
+  .empty-state {
+    display: flex; flex-direction: column; align-items: flex-start; gap: 22px;
+    background: var(--ink2); border-radius: 18px; padding: 44px 40px;
+  }
+  .watch-more {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 24px; flex-wrap: wrap;
+    margin-top: 44px; padding-top: 32px; border-top: 1px solid var(--ink3);
+  }
+  .watch-more span { font-size: 17px; color: var(--muted); }
+
+  .cta { padding: 84px 0 92px 0; text-align: center; border-top: 1px solid var(--ink3); }
+  .cta__h { font-size: 46px; line-height: 1.06; margin: 16px auto 24px auto; max-width: 600px; }
+
+  @media (max-width: 720px) {
+    .head { padding: 28px 0 28px 0; }
+    .head__h { font-size: 34px; }
+    .head__p { font-size: 16px; }
+    .head__blob { width: 200px; height: 200px; top: -70px; right: -60px; }
+    .head__dots, .head__star { display: none; }
+    .grid-section { padding-bottom: 52px; }
+    .cta { padding: 52px 0 60px 0; }
+    .cta__h { font-size: 30px; }
+    .cta .btn { display: block; }
+    .empty-state { padding: 28px 24px; }
+    .watch-more { flex-direction: column; align-items: stretch; text-align: center; gap: 16px; }
+  }
+</style>

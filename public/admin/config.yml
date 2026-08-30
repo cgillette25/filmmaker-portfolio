@@ -2,19 +2,65 @@ backend:
   name: github
   repo: cgillette25/filmmaker-portfolio
   branch: main
+  base_url: https://api.netlify.com
+  auth_endpoint: auth
 
-media_folder: "public/images/uploads"
-public_folder: "/images/uploads"
+publish_mode: simple
+media_folder: "public/uploads"
+public_folder: "/uploads"
 
 collections:
   - name: "videos"
     label: "Videos"
+    label_singular: "Video"
     folder: "src/content/videos"
     create: true
-    slug: "{{slug}}"
+    delete: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    summary: "{{title}}  /  {{category}}  /  {{year}}"
+    sortable_fields: ["date", "title", "category"]
+    view_groups:
+      - label: "Type"
+        field: category
     fields:
-      - { label: "Title", name: "title", widget: "string" }
-      - { label: "YouTube Video ID", name: "youtubeId", widget: "string", hint: "The part after v= in the YouTube URL, e.g. dQw4w9WgXcQ" }
-      - { label: "Category", name: "category", widget: "select", options: ["verticals", "shorts", "dance"] }
-      - { label: "Date", name: "date", widget: "datetime" }
-      - { label: "Description", name: "description", widget: "text", required: false }
+      - label: "Title"
+        name: "title"
+        widget: "string"
+        hint: "The name of the film, as you want it shown on the site."
+
+      - label: "Type"
+        name: "category"
+        widget: "select"
+        options:
+          - { label: "Short Film", value: "shorts" }
+          - { label: "Dance Film", value: "dance" }
+          - { label: "Vertical", value: "verticals" }
+
+      - label: "YouTube video ID"
+        name: "youtubeId"
+        widget: "string"
+        pattern: ['^[A-Za-z0-9_-]{11}$', "That should be the 11-character ID only, not the whole link."]
+        hint: >-
+          Open the video on YouTube and copy the part after "v=".
+          youtube.com/watch?v=dQw4w9WgXcQ  →  dQw4w9WgXcQ
+
+      - label: "Date"
+        name: "date"
+        widget: "datetime"
+        date_format: "YYYY-MM-DD"
+        time_format: false
+        picker_utc: false
+        hint: "Newest videos show first."
+
+      - label: "Show on the home page"
+        name: "featured"
+        widget: "boolean"
+        default: false
+        required: false
+        hint: "Featured videos are pulled to the top of Selected Work."
+
+      - label: "Description"
+        name: "description"
+        widget: "text"
+        required: false
+        hint: "Optional. Not shown on the site yet, here for later."

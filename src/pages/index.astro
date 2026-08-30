@@ -1,16 +1,199 @@
 ---
 import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
+import HeroCollage from '../components/HeroCollage.astro';
 import VideoCard from '../components/VideoCard.astro';
+import { CATEGORIES } from '../lib/categories';
+import { SITE } from '../lib/site';
+import About from '../components/About.astro';
 
-const allVideos = await getCollection('videos');
-const recent = allVideos
-  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
-  .slice(0, 6);
+const all = (await getCollection('videos')).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+);
+
+// featured first, then newest, capped at six
+const selected = [...all].sort((a, b) => Number(b.data.featured) - Number(a.data.featured)).slice(0, 6);
+
+const countFor = (id: string) => all.filter((v) => v.data.category === id).length;
+
+const services = [
+  { n: '01', title: 'Concept & script', body: 'We shape the idea until it is worth shooting.' },
+  { n: '02', title: 'Production', body: 'Crew, cast, locations and kit, booked and run by us.' },
+  { n: '03', title: 'Post & delivery', body: 'Edit, sound, colour, and every cut-down you need.' },
+];
 ---
-<Base title="Home">
-  <h1>Welcome</h1>
-  <div>
-    {recent.map((video) => <VideoCard video={video} />)}
-  </div>
+
+<Base>
+  <!-- ================= HERO ================= -->
+  <section class="hero wrap">
+    <HeroCollage />
+    <div class="hero__copy">
+      <div class="eyebrow">SHORT &middot; DANCE &middot; VERTICAL</div>
+      <h1>Cohan&nbsp;Co.<br /><span style="color:var(--orange);">Productions</span></h1>
+      <p>A production company that helps creators tell their story.</p>
+      <div class="hero__actions">
+        <a href="#contact" class="btn btn-cream">Start a Project</a>
+        <a href="#work" class="btn btn-ghost">See the Work</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= SELECTED WORK ================= -->
+  <section class="wrap section" id="work">
+    <div class="section__head">
+      <div>
+        <div class="eyebrow">THE WORK</div>
+        <h2>Selected Work</h2>
+      </div>
+      <a href={`/${CATEGORIES[0].id}`} class="section__link">View everything</a>
+    </div>
+
+    {selected.length === 0 ? (
+      <p class="empty">No videos here yet. Everything is up on <a href={SITE.youtube} target="_blank" rel="noopener">the YouTube channel</a> in the meantime.</p>
+    ) : (
+      <div class="grid-3">
+        {selected.map((video, i) => (
+          <VideoCard video={video} tone={i % 2 === 0 ? 'indigo' : 'orange'} />
+        ))}
+      </div>
+    )}
+
+    <div class="watch-more">
+      <span>Everything Cohan Co. has made lives on YouTube.</span>
+      <a href={SITE.youtube} target="_blank" rel="noopener" class="btn btn-ghost">Watch on YouTube</a>
+    </div>
+  </section>
+
+  <!-- ================= BROWSE BY TYPE ================= -->
+  <section class="wrap section">
+    <div class="eyebrow">BROWSE</div>
+    <h2 style="margin-bottom:32px;">By type</h2>
+    <div class="rows">
+      {CATEGORIES.map((c) => (
+        <a href={`/${c.id}`} class="row">
+          <span class="row__dot" style={`background:${c.dot};`}></span>
+          <span class="row__name">{c.label}</span>
+          <span class="row__desc">{c.blurb}</span>
+          <span class="row__count">{countFor(c.id)} {countFor(c.id) === 1 ? 'film' : 'films'}</span>
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M5 12h13M13 6l6 6-6 6" stroke="var(--cream)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+          </svg>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <About />
+
+  <!-- ================= FOR BRANDS ================= -->
+  <section class="brands">
+    <div class="wrap brands__inner">
+      <div>
+        <div class="dsp brands__eyebrow">FOR BRANDS &amp; CREATORS</div>
+        <h2 class="brands__h">Bring us your idea, leave with a film.</h2>
+        <p class="brands__p">
+          We handle it end to end: concept, crew, shoot, edit, delivery. Comedy and sci-fi are our
+          home turf, but the process is the same whatever you are making.
+        </p>
+        <a href="#contact" class="btn btn-cream">Start a Project</a>
+      </div>
+      <div class="brands__list">
+        {services.map((s, i) => (
+          <div class="brands__item" style={i === services.length - 1 ? 'border-bottom:0;' : ''}>
+            <span class="dsp brands__n">{s.n}</span>
+            <div>
+              <div class="dsp brands__t">{s.title}</div>
+              <div class="brands__b">{s.body}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= CONTACT ================= -->
+  <section class="cta" id="contact">
+    <svg class="cta__star cta__star--a" width="40" height="40" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0L9.5 6.5L16 8L9.5 9.5L8 16L6.5 9.5L0 8L6.5 6.5L8 0Z" fill="var(--orange)"></path></svg>
+    <svg class="cta__star cta__star--b" width="28" height="28" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0L9.5 6.5L16 8L9.5 9.5L8 16L6.5 9.5L0 8L6.5 6.5L8 0Z" fill="var(--cream)"></path></svg>
+    <div class="wrap">
+      <div class="eyebrow">SAY HELLO</div>
+      <h2 class="cta__h">Got something you want made?</h2>
+      <p class="cta__p">Tell us the idea. We will tell you what it takes.</p>
+      <a href={`mailto:${SITE.email}`} class="btn btn-orange">Start a Project</a>
+    </div>
+  </section>
 </Base>
+
+<style>
+  .hero {
+    display: grid;
+    grid-template-columns: 620px 1fr;
+    gap: 64px;
+    align-items: center;
+    padding-top: 56px;
+    padding-bottom: 80px;
+  }
+  .hero__copy { max-width: 470px; }
+  .hero__copy h1 { font-size: 64px; line-height: 1.02; margin: 20px 0 24px 0; }
+  .hero__copy p { font-size: 18px; line-height: 1.62; color: var(--muted); margin: 0 0 36px 0; }
+  .hero__actions { display: flex; gap: 14px; flex-wrap: wrap; }
+
+  .section { padding-bottom: 96px; }
+  .section__head { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; margin-bottom: 36px; }
+  .section__head h2 { font-size: 40px; margin-top: 12px; }
+  .section__link { font-size: 15px; font-weight: 600; color: var(--muted); border-bottom: 2px solid var(--orange); padding-bottom: 4px; white-space: nowrap; }
+  .section h2 { font-size: 40px; margin-top: 12px; }
+  .empty { color: var(--muted); font-size: 17px; }
+  .empty a { color: var(--orange); text-decoration: underline; }
+
+  .rows { display: flex; flex-direction: column; gap: 16px; }
+
+  .watch-more {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 24px; flex-wrap: wrap;
+    margin-top: 44px; padding-top: 32px; border-top: 1px solid var(--ink3);
+  }
+  .watch-more span { font-size: 17px; color: var(--muted); }
+
+  .brands { background: var(--indigo); padding: 88px 0; }
+  .brands__inner { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+  .brands__eyebrow { font-weight: 600; font-size: 13px; letter-spacing: 0.09em; color: oklch(0.88 0.09 60); margin-bottom: 18px; }
+  .brands__h { font-size: 46px; line-height: 1.08; margin-bottom: 22px; }
+  .brands__p { font-size: 18px; line-height: 1.62; color: oklch(0.93 0.03 283); margin: 0 0 34px 0; max-width: 480px; }
+  .brands__item { display: flex; gap: 24px; padding: 26px 0; border-bottom: 1px solid oklch(0.60 0.14 283); }
+  .brands__n { font-weight: 700; font-size: 15px; color: var(--orange); width: 38px; flex-shrink: 0; }
+  .brands__t { font-weight: 700; font-size: 21px; margin-bottom: 6px; }
+  .brands__b { font-size: 15px; line-height: 1.6; color: oklch(0.90 0.04 283); }
+
+  .cta { position: relative; padding: 96px 0 104px 0; text-align: center; overflow: hidden; }
+  .cta__h { font-size: 52px; line-height: 1.06; margin: 16px auto 22px auto; max-width: 640px; }
+  .cta__p { font-size: 18px; line-height: 1.6; color: var(--muted); margin: 0 auto 36px auto; max-width: 460px; }
+  .cta__star { position: absolute; }
+  .cta__star--a { top: 64px; left: 190px; }
+  .cta__star--b { bottom: 78px; right: 206px; }
+
+  @media (max-width: 1100px) {
+    .hero { grid-template-columns: 1fr; gap: 32px; }
+    .brands__inner { grid-template-columns: 1fr; gap: 44px; }
+    .cta__star { display: none; }
+  }
+  @media (max-width: 720px) {
+    .hero { padding-top: 24px; padding-bottom: 44px; }
+    .hero__copy h1 { font-size: 38px; }
+    .hero__copy p { font-size: 16px; }
+    .hero__actions { flex-direction: column; }
+    .hero__actions .btn { text-align: center; }
+    .section { padding-bottom: 56px; }
+    .section__head { flex-direction: column; align-items: flex-start; gap: 14px; }
+    .section h2, .section__head h2 { font-size: 30px; }
+    .brands { padding: 48px 0; }
+    .brands__h { font-size: 32px; }
+    .brands__p { font-size: 16px; }
+    .brands__list .btn, .brands .btn { display: block; text-align: center; }
+    .cta { padding: 56px 0 64px 0; }
+    .cta__h { font-size: 32px; }
+    .cta__p { font-size: 16px; }
+    .cta .btn { display: block; }
+    .watch-more { flex-direction: column; align-items: stretch; text-align: center; gap: 16px; }
+  }
+</style>
