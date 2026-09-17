@@ -16,8 +16,8 @@ collections:
     folder: "src/content/videos"
     create: true
     delete: true
-    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
-    summary: "{{title}}  /  {{category}}  /  {{year}}"
+    slug: "{{slug}}"
+    summary: "{{title}}  /  {{category}}"
     sortable_fields: ["date", "title", "category"]
     view_groups:
       - label: "Type"
@@ -35,6 +35,7 @@ collections:
           - { label: "Short Film", value: "shorts" }
           - { label: "Dance Film", value: "dance" }
           - { label: "Vertical", value: "verticals" }
+          - { label: "Mini-Series episode", value: "series" }
 
       - label: "YouTube video ID"
         name: "youtubeId"
@@ -44,13 +45,38 @@ collections:
           Open the video on YouTube and copy the part after "v=".
           youtube.com/watch?v=dQw4w9WgXcQ  →  dQw4w9WgXcQ
 
+      - label: "Series"
+        name: "series"
+        widget: "select"
+        required: false
+        options:
+          - { label: "Ooops! We Elected a Dictator!!", value: "oops-we-elected-a-dictator" }
+        hint: "Only for Mini-Series episodes. Leave blank otherwise."
+
+      - label: "Episode number"
+        name: "episode"
+        widget: "number"
+        required: false
+        value_type: "int"
+        min: 1
+        hint: "Only for Mini-Series episodes. Episodes play in this order."
+
       - label: "Date"
         name: "date"
         widget: "datetime"
+        required: false
         date_format: "YYYY-MM-DD"
         time_format: false
         picker_utc: false
-        hint: "Newest videos show first."
+        hint: "Optional. Newest shows first when no running order is set."
+
+      - label: "Running order"
+        name: "order"
+        widget: "number"
+        required: false
+        value_type: "int"
+        min: 1
+        hint: "Optional. 1 puts it first on its page. Beats the date."
 
       - label: "Show on the home page"
         name: "featured"

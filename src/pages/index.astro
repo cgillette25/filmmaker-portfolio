@@ -3,16 +3,22 @@ import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import HeroCollage from '../components/HeroCollage.astro';
 import VideoCard from '../components/VideoCard.astro';
-import { CATEGORIES } from '../lib/categories';
+import { CATEGORIES, countLabel } from '../lib/categories';
 import { SITE } from '../lib/site';
+import { byRunningOrder } from '../lib/sort';
 import About from '../components/About.astro';
 
-const all = (await getCollection('videos')).sort(
-  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
-);
+const all = (await getCollection('videos')).sort(byRunningOrder);
 
-// featured first, then newest, capped at six
-const selected = [...all].sort((a, b) => Number(b.data.featured) - Number(a.data.featured)).slice(0, 6);
+// a badged film leads, then the featured ones, capped at six.
+// `all` is already in running order, and the sort is stable, so that holds underneath.
+const selected = [...all]
+  .sort(
+    (a, b) =>
+      Number(!!b.data.badge) - Number(!!a.data.badge) ||
+      Number(b.data.featured) - Number(a.data.featured)
+  )
+  .slice(0, 6);
 
 const countFor = (id: string) => all.filter((v) => v.data.category === id).length;
 
@@ -74,7 +80,7 @@ const services = [
           <span class="row__dot" style={`background:${c.dot};`}></span>
           <span class="row__name">{c.label}</span>
           <span class="row__desc">{c.blurb}</span>
-          <span class="row__count">{countFor(c.id)} {countFor(c.id) === 1 ? 'film' : 'films'}</span>
+          <span class="row__count">{countLabel(c, countFor(c.id))}</span>
           <svg width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden="true">
             <path d="M5 12h13M13 6l6 6-6 6" stroke="var(--cream)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
           </svg>

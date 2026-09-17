@@ -95,21 +95,51 @@ const {
           <button type="button" class="lightbox__close" id="lightbox-close">Close</button>
         </div>
         <div class="lightbox__frame" id="lightbox-frame"></div>
-        <p class="lightbox__desc" id="lightbox-desc"></p>
       </div>
     </div>
+
+
+    <script is:inline>
+      /* YouTube thumbnail fallback.
+         maxresdefault only exists for videos uploaded at high enough resolution,
+         so Shorts and older uploads 404 and show a broken image. Two failure
+         modes to catch: a real 404 (fires error) and a 120x90 grey placeholder
+         served with a 200 (fires load, never error). hqdefault always exists. */
+      (function () {
+        var SIZES = ['maxresdefault', 'sddefault', 'hqdefault'];
+
+        function stepDown(img) {
+          var next = Number(img.getAttribute('data-yt-step') || 0) + 1;
+          if (next >= SIZES.length) return; // hqdefault is the floor
+          img.setAttribute('data-yt-step', String(next));
+          img.src = 'https://i.ytimg.com/vi/' + img.getAttribute('data-yt') + '/' + SIZES[next] + '.jpg';
+        }
+
+        function isThumb(el) {
+          return el && el.tagName === 'IMG' && el.hasAttribute('data-yt');
+        }
+
+        // the error event does not bubble, so listen during capture
+        document.addEventListener('error', function (e) {
+          if (isThumb(e.target)) stepDown(e.target);
+        }, true);
+
+        document.addEventListener('load', function (e) {
+          if (isThumb(e.target) && e.target.naturalWidth > 0 && e.target.naturalWidth <= 120) {
+            stepDown(e.target);
+          }
+        }, true);
+      })();
+    </script>
 
     <script is:inline>
       (function () {
         var box = document.getElementById('lightbox');
         var frame = document.getElementById('lightbox-frame');
         var titleEl = document.getElementById('lightbox-title');
-        var descEl = document.getElementById('lightbox-desc');
 
-        function open(id, title, description) {
+        function open(id, title) {
           titleEl.textContent = title || '';
-          descEl.textContent = description || '';
-          descEl.style.display = description ? 'block' : 'none';
           frame.innerHTML =
             '<iframe src="https://www.youtube-nocookie.com/embed/' +
             encodeURIComponent(id) +
@@ -129,11 +159,7 @@ const {
         document.addEventListener('click', function (e) {
           var card = e.target.closest('[data-video]');
           if (card) {
-            open(
-              card.getAttribute('data-video'),
-              card.getAttribute('data-title'),
-              card.getAttribute('data-description')
-            );
+            open(card.getAttribute('data-video'), card.getAttribute('data-title'));
             return;
           }
           if (e.target === box || e.target.id === 'lightbox-close') close();
