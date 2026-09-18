@@ -1,5 +1,6 @@
-// @ts-check
 import { defineConfig } from 'astro/config';
 
-// https://astro.build/config
-export default defineConfig({});
+export default defineConfig({
+  // absolute URLs for share cards and canonical links are built from this
+  site: 'https://cohanco.com',
+});
