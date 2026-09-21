@@ -1,5 +1,5 @@
 ---
-title: 'Oops! We Elected a Dictator Episode 10: Time Travel Rulez'
+title: Time Travel Rulez
 category: series
 youtubeId: u_h1fNuYofM
 series: oops-we-elected-a-dictator
