@@ -7,5 +7,5 @@ episode: 9
 date: ''
 order: null
 featured: false
-description: ''
+description: While traveling in a cardboard box, Honey and Tyler try and get back to the past.
 ---
