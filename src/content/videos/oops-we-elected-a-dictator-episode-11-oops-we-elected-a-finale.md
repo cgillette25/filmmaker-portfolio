@@ -1,5 +1,5 @@
 ---
-title: We Elected a Finale
+title: Oops! We Elected a Finale
 category: series
 youtubeId: PZFsfsmqL5c
 series: oops-we-elected-a-dictator
