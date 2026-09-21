@@ -1,5 +1,5 @@
 ---
-title: 'Oops! We Elected a Dictator Episode 9: Back to the Past'
+title: Back to the Past
 category: series
 youtubeId: vzgcaLEcxrQ
 series: oops-we-elected-a-dictator
