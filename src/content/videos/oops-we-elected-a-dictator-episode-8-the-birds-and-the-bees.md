@@ -1,5 +1,5 @@
 ---
-title: 'Oops! We Elected a Dictator Episode 8: The Birds and the Bees'
+title: The Birds and the Bees
 category: series
 youtubeId: TWfKCVKqdpM
 series: oops-we-elected-a-dictator
