@@ -1,5 +1,5 @@
 ---
-title: 'Oops! We Elected a Dictator Episode 11: Oops! We Elected a Finale'
+title: We Elected a Finale
 category: series
 youtubeId: PZFsfsmqL5c
 series: oops-we-elected-a-dictator
