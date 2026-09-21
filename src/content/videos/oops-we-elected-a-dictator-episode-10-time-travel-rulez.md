@@ -7,5 +7,5 @@ episode: 10
 date: 2026-09-21
 order: null
 featured: false
-description: ''
+description: Tyler and Honey try to convince their past selves to vote pt. 1.
 ---
