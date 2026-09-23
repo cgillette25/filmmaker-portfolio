@@ -28,7 +28,7 @@ export const TEAM: Person[] = [
   {
     name: 'Chaz Gillette',
     role: 'Producer',
-    bio: 'Chaz produces at Cohan Co. and acts in indie shorts and commercial work. He also builds audience, with over 100 million organic views across his own channels in the past year.',
+    bio: 'Chaz produces at Cohan Co. and acts in indie shorts and commercial work. He also builds audience, with over 100 million organic views across his own channels.',
     photo: '/collage/chaz.jpg',
     tone: 'orange',
     rotate: 4,
