@@ -51,7 +51,7 @@ const services = [
         <div class="eyebrow">THE WORK</div>
         <h2>Selected Work</h2>
       </div>
-      <a href={`/${CATEGORIES[0].id}`} class="section__link">View everything</a>
+      <a href="#browse" class="section__link">View everything</a>
     </div>
 
     {selected.length === 0 ? (
@@ -71,7 +71,7 @@ const services = [
   </section>
 
   <!-- ================= BROWSE BY TYPE ================= -->
-  <section class="wrap section">
+  <section class="wrap section" id="browse">
     <div class="eyebrow">BROWSE</div>
     <h2 style="margin-bottom:32px;">By type</h2>
     <div class="rows">

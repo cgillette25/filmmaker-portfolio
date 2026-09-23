@@ -20,7 +20,7 @@ export const TEAM: Person[] = [
   {
     name: 'Ash Cohan',
     role: 'Founder. Writer, Director, Producer',
-    bio: 'Ash founded Cohan Co. and writes, directs and produces its films. She graduated from Chapman University with a screenwriting major, and connects artists and teams to tell the stories they want to tell.',
+    bio: "Ash founded Cohan Co. and writes, directs and produces its films. With a BFA in Screenwriting from Chapman University, Ash's goal is to tell compelling stories in original ways. Having written and directed an eleven episode mini-series and over a dozen short/dance films, she hopes to reach a wide audience with everything she makes.",
     photo: '/collage/ash.jpg',
     tone: 'indigo',
     rotate: -5,

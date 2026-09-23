@@ -1,7 +1,8 @@
 ---
-import type { CollectionEntry } from 'astro:content';
+import { getCollection, type CollectionEntry } from 'astro:content';
 import { categoryLabel } from '../lib/categories';
-import { seriesById } from '../lib/series';
+
+import { youtubeId } from '../lib/youtube';
 
 interface Props {
   video: CollectionEntry<'videos'>;
@@ -10,15 +11,19 @@ interface Props {
 }
 
 const { video, tone = 'indigo' } = Astro.props;
-const { title, category, youtubeId, date, description, series, episode, badge } = video.data;
+const { title, category, youtubeId: rawId, date, description, series, episode, badge } = video.data;
+// tolerate a full URL being pasted into the CMS instead of the bare id
+const videoId = youtubeId(rawId);
 
 // Start at the sharpest size. Base.astro steps down automatically when a video
 // has no maxres, which is common on Shorts and older uploads.
-const thumb = `https://i.ytimg.com/vi/${youtubeId}/maxresdefault.jpg`;
-// an episode says which show and which number; everything else says type and year
-const show = seriesById(series);
+const thumb = `https://i.ytimg.com/vi/${videoId}/maxresdefault.jpg`;
+// an episode says which show and which number; everything else says type and year.
+// The series title comes from content now, so renaming a show in the CMS renames it here too.
+const allSeries = await getCollection('series');
+const show = series ? allSeries.find((x) => x.id === series) : undefined;
 const meta = show
-  ? `${show.title} \u00b7 Ep ${episode}`
+  ? `${show.data.title} \u00b7 Ep ${episode}`
   : date
     ? `${categoryLabel(category)} \u00b7 ${date.getFullYear()}`
     : categoryLabel(category);
@@ -27,14 +32,14 @@ const meta = show
 <button
   class="card frame frame--caption"
   type="button"
-  data-video={youtubeId}
+  data-video={videoId}
   data-title={title}
   data-description={description ?? ''}
   aria-label={`Play ${title}`}
 >
   <span class="card__thumb">
     <span class={`duo duo--${tone}`} style="width:100%; aspect-ratio:16/9;">
-      <img src={thumb} data-yt={youtubeId} alt="" loading="lazy" />
+      <img src={thumb} data-yt={videoId} alt="" loading="lazy" />
     </span>
     {badge && <span class="card__badge">{badge}</span>}
     <span class="card__play">

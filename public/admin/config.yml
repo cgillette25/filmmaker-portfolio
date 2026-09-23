@@ -37,20 +37,24 @@ collections:
           - { label: "Vertical", value: "verticals" }
           - { label: "Mini-Series episode", value: "series" }
 
-      - label: "YouTube video ID"
+      - label: "YouTube link or video ID"
         name: "youtubeId"
         widget: "string"
-        pattern: ['^[A-Za-z0-9_-]{11}$', "That should be the 11-character ID only, not the whole link."]
+        pattern: ['^\s*(?:[A-Za-z0-9_-]{11}|https?://\S+)\s*$', "Paste the whole YouTube link, or just the 11-character ID."]
         hint: >-
-          Open the video on YouTube and copy the part after "v=".
-          youtube.com/watch?v=dQw4w9WgXcQ  →  dQw4w9WgXcQ
+          Easiest way: open the video, hit Share, and paste the whole link.
+          Any YouTube format works and the tracking bit on the end is ignored.
+          youtu.be/RTkpus2edYY?si=abc123  and  youtube.com/watch?v=RTkpus2edYY
+          and  youtube.com/shorts/2okP98wrZ7o  all point at the same video.
 
       - label: "Series"
         name: "series"
-        widget: "select"
+        widget: "relation"
         required: false
-        options:
-          - { label: "Ooops! We Elected a Dictator!!", value: "oops-we-elected-a-dictator" }
+        collection: "series"
+        search_fields: ["title"]
+        display_fields: ["title"]
+        value_field: "{{slug}}"
         hint: "Only for Mini-Series episodes. Leave blank otherwise."
 
       - label: "Episode number"
@@ -89,4 +93,35 @@ collections:
         name: "description"
         widget: "text"
         required: false
-        hint: "Optional. Not shown on the site yet, here for later."
+        hint: >-
+          This is the summary people read on the card before they decide to watch.
+          Write as much or as little as you like. Leave it blank and the card just
+          shows the title.
+
+  - name: "series"
+    label: "Mini-Series"
+    label_singular: "Series"
+    folder: "src/content/series"
+    create: true
+    delete: true
+    slug: "{{slug}}"
+    summary: "{{title}}"
+    fields:
+      - label: "Series title"
+        name: "title"
+        widget: "string"
+        hint: "Shown above its episodes on the Mini-Series page."
+
+      - label: "Description"
+        name: "blurb"
+        widget: "text"
+        required: false
+        hint: "One or two lines about the show, shown under the title."
+
+      - label: "Running order"
+        name: "order"
+        widget: "number"
+        required: false
+        value_type: "int"
+        min: 1
+        hint: "Optional. Only matters once there is more than one series."

@@ -4,7 +4,7 @@ import Base from '../layouts/Base.astro';
 import VideoCard from '../components/VideoCard.astro';
 import { CATEGORIES, countLabel } from '../lib/categories';
 import { SITE } from '../lib/site';
-import { SERIES } from '../lib/series';
+
 import { byRunningOrder } from '../lib/sort';
 
 export async function getStaticPaths() {
@@ -28,10 +28,13 @@ const count = videos.length;
 // gets its own title and logline above its episodes.
 const groups =
   category.id === 'series'
-    ? SERIES.map((show) => ({
-        show,
-        episodes: videos.filter((v) => v.data.series === show.id),
-      })).filter((g) => g.episodes.length > 0)
+    ? (await getCollection('series'))
+        .sort((a, b) => (a.data.order ?? Infinity) - (b.data.order ?? Infinity))
+        .map((show) => ({
+          show,
+          episodes: videos.filter((v) => v.data.series === show.id),
+        }))
+        .filter((g) => g.episodes.length > 0)
     : [];
 ---
 
@@ -59,8 +62,8 @@ const groups =
     ) : groups.length > 0 ? (
       groups.map((g) => (
         <div class="series">
-          <h2 class="series__title">{g.show.title}</h2>
-          <p class="series__blurb">{g.show.blurb}</p>
+          <h2 class="series__title">{g.show.data.title}</h2>
+          {g.show.data.blurb && <p class="series__blurb">{g.show.data.blurb}</p>}
           <div class="grid-3">
             {g.episodes.map((video, i) => (
               <VideoCard video={video} tone={i % 2 === 0 ? 'indigo' : 'orange'} />
