@@ -7,5 +7,5 @@ episode: null
 date: ''
 order: null
 featured: false
-description: ''
+description: The final phone call between two exes and former best friends.
 ---
