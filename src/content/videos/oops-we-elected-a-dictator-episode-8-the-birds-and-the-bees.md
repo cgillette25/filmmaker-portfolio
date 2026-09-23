@@ -7,5 +7,5 @@ episode: 8
 date: 2026-09-21
 order: null
 featured: false
-description: ''
+description: Honey, Tyler, and Nancy learn about the future of the Teal Party.
 ---
